@@ -1,0 +1,85 @@
+
+TABLE III. *Deaths in New York City, N.Y. for all weeks during 2002
+
+column labels in same order that data fields appears in each record below:
+MMWR week
+All causes of death, all ages**
+All causes of death, >=65 years
+All causes of death, 45-64 years
+All causes of death, 25-44 years
+All causes of death, 1-24 years
+All causes of death, less than 1 year
+Pneumonia and influenza
+
+tab delimited data:
+01	1,260	846	259	109	29	17	47														
+02	1,468	1,046	282	96	27	17	81														
+03	1,372	921	304	98	15	31	72														
+04	1,304	916	266	90	15	14	70														
+05	1,287	889	269	86	19	24	71														
+06	1,323	922	273	96	20	12	58														
+07	1,330	949	252	97	11	21	78														
+08	1,231	877	244	86	14	10	58														
+09	1,235	838	268	88	22	19	76														
+10	1,195	824	265	74	14	18	50														
+11	1,176	802	265	78	18	13	52														
+12	1,191	835	231	92	19	12	51														
+13	1,130	823	200	77	13	17	49														
+14	1,136	781	235	83	21	15	32														
+15	1,144	793	239	81	15	16	45														
+16	1,150	776	237	88	25	24	51														
+17	1,160	776	232	108	25	18	44														
+18	1,110	751	242	86	17	12	47														
+19	1,084	747	225	86	16	9	45														
+20	1,144	798	226	90	19	10	47														
+21	1,103	761	215	93	24	10	37														
+22	1,053	740	209	68	18	18	41														
+23	1,150	758	255	105	20	12	48														
+24	1,049	718	216	89	15	11	42														
+25	1,015	701	211	83	13	7	40														
+26	1,052	717	214	79	25	16	27														
+27	979	655	222	71	18	13	35														
+28	1,264	876	264	86	25	13	48														
+29	1,038	686	242	83	18	9	34														
+30	1,091	749	229	76	17	17	36														
+31	1,095	766	216	68	26	17	35														
+32	1,075	746	231	73	12	12	40														
+33	1,056	713	229	79	17	18	48														
+34	1,048	703	218	100	18	9	49														
+35	1,072	730	230	81	20	11	-														
+36	959	674	189	72	14	10	25														
+37	1,100	751	243	72	18	16	31														
+38	1,153	811	233	82	17	9	49														
+39	1,051	748	208	72	12	11	41														
+40	1,020	712	204	77	14	13	36														
+41	1,049	755	209	59	19	7	37														
+42	1,068	746	227	62	18	14	36														
+43	1,124	800	213	82	15	14	43														
+44	1,207	842	256	82	16	11	56														
+45	1,188	823	264	72	15	14	59														
+46	1,227	880	236	74	23	14	43														
+47	1,200	832	237	86	26	19	36														
+48	995	678	229	62	14	12	40														
+49	1,224	851	243	96	15	19	52														
+50	1,234	854	271	69	14	26	43														
+51	1,301	937	231	96	24	13	58														
+52	1,037	738	202	66	19	12	52														
+
+U: Unavailable
+-: No reported cases 
+* Mortality data in this table are voluntarily reported from 122 cities in the United States,
+ most of which have populations of 100,000 or more. A death is reported by the place of
+ its occurrence and by the week that the death certificate was filed.
+ Fetal deaths are not included.
+
+** Totals include unknown ages.
+
+*** Partial counts for this city.
+
+
+National Notifiable Diseases Surveillance System (NNDSS) at http://wwwn.cdc.gov/nndss/
+
+
+MMWR web application provided by CDC WONDER; http://wonder.cdc.gov
+
+
