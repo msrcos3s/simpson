@@ -32,7 +32,7 @@ dataframe_final <- do.call("rbind", lista_dataframes)
 headTail(dataframe_final)
 
 
-# Selecionar as colunas 'Date' e 'Daily Mean PM10 Concentration' e renomear a última para 'PM10'
+# Selecionar as colunas 'Date' e 'Daily Mean PM10 Concentration' 
 pm10 <- dataframe_final %>%
     select(Date, `Daily.Mean.PM10.Concentration`) %>%
     rename(PM10 = `Daily.Mean.PM10.Concentration`)
@@ -93,7 +93,7 @@ write.csv(final_data, "final_data.csv", row.names = FALSE)
 
 
 
-############# Explorando 
+############# Explorando ###################### 
 
 # 1. Importar os dados de pm10.csv e converter a coluna Date para o formato Date.
 pm10 <- read.csv("pm10.csv", stringsAsFactors = FALSE)
@@ -140,6 +140,8 @@ write.csv(new_pm10, "base.csv")
 ###########################################################################
 ################# A PARTIR DO ARQUIVO basse.csv ###########################
 ###########################################################################
+
+
 dataraw<- read.csv("base.csv")
 
 
@@ -149,15 +151,18 @@ dataraw$Date <- as.Date(dataraw$Date)
 headTail(dataraw)
 
 
-###### Modelos Matemáticos 
+###### Modelos Matemáticos ##############
 
 
 # Ajustando o modelo de regressão linear (morte por todas as causas e faixas etárias/dia)
-modelo_g <- lm(total ~ PM10, data = dataraw)
+modelo_g <- glm(total ~ PM10, data = dataraw)
 summary(modelo_g)
 
+
+
+
 ### Mortes por causas respiratórias 
-modelo_i <- lm(IN ~ PM10, data = dataraw)
+modelo_i <- glm(IN ~ PM10, data = dataraw)
 summary(modelo_i)
 
 
@@ -169,116 +174,164 @@ verao <- subset(dataraw, format(Date, "%m") %in% c("06", "07", "08"))
 
 
 # Regressões por estação do ano todas as causas
-reg_primavera <- lm(total ~ PM10, data = primavera)
+reg_primavera <- glm(total ~ PM10, data = primavera)
 summary(reg_primavera)
-reg_verao <- lm(total ~ PM10, data = verao)
+reg_verao <- glm(total ~ PM10, data = verao)
 summary(reg_verao)
-reg_outono <- lm(total ~ PM10, data = outono)
+reg_outono <- glm(total ~ PM10, data = outono)
 summary(reg_outono)
-reg_inverno <- lm(total ~ PM10, data = inverno)
+reg_inverno <- glm(total ~ PM10, data = inverno)
 summary(reg_inverno)
 
 
 # Regressões por estação do ano e mortes por Pneumonia e Influenza
-reg_primavera_i <- lm(IN ~ PM10, data = primavera)
+reg_primavera_i <- glm(IN ~ PM10, data = primavera)
 summary(reg_primavera_i)
-reg_verao_i <- lm(IN ~ PM10, data = verao)
+reg_verao_i <- glm(IN ~ PM10, data = verao)
 summary(reg_verao_i)
-reg_outono_i <- lm(IN ~ PM10, data = outono)
+reg_outono_i <- glm(IN ~ PM10, data = outono)
 summary(reg_outono_i)
-reg_inverno_i <- lm(IN ~ PM10, data = inverno)
+reg_inverno_i <- glm(IN ~ PM10, data = inverno)
 summary(reg_inverno_i)
 
 
 
-# Regressões por estação do ano e mortes em idosos >65 anos
+# Regressões por estgação do ano e mortes em idosos >65 anos
 reg_primavera_65 <- lm(I65 ~ PM10, data = primavera)
 summary(reg_primavera_65)
-reg_verao_65 <- lm(I65 ~ PM10, data = verao)
+reg_verao_65 <- glm(I65 ~ PM10, data = verao)
 summary(reg_verao_65)
-reg_outono_65 <- lm(I65 ~ PM10, data = outono)
+reg_outono_65 <- glm(I65 ~ PM10, data = outono)
 summary(reg_outono_65)
-reg_inverno_65 <- lm(I65 ~ PM10, data = inverno)
+reg_inverno_65 <- glm(I65 ~ PM10, data = inverno)
 summary(reg_inverno_65)
 
 
-#### Subset dos anos de 2009 e 2010
 
-### Dispersão 
-library(ggpmisc)
+# Filtrando dados para 2006 a 2010
+dados_2006_2010 <- subset(dataraw, format(Date, "%Y") %in% c("2006", "2007", "2008", "2009", "2010"))
 
-# Filtrando dados para 2009 e 2010
-dados_2009_2010 <- subset(dataraw, format(Date, "%Y") %in% c("2009", "2010"))
-
-# Criando gráfico de dispersão com reta de regressão linear e sombreamento do SE
-p <- ggplot(dados_2009_2010, aes(x = PM10, y = total)) +
+# Criando gráfico de dispersão com reta de GLM
+p <- ggplot(dados_2006_2010, aes(x = PM10, y = total)) +
     geom_point() +
-    geom_smooth(method = "lm", se = TRUE, linetype = "solid", color = "blue") +
+    geom_smooth(method = "glm", se = TRUE, linetype = "solid", color = "blue") +
     theme_bw() +
-    labs(x = "PM10 (μg/m³)", y = "Mortes Diárias", title = "Dispersão de PM10 x Mortes Diárias (2009-2010)")
+    labs(x = "PM10 (μg/m³)", y = "Mortes Diárias", title = "Dispersão de PM10 x Mortes Diárias (2006 a 2010)")
 
 print(p)
 
 
 
+# Ajustar o modelo GLM
+modelo <- glm(total ~ PM10, data = dados_2006_2010)
+
+# Extrair os coeficientes
+intercepto <- coef(modelo)[1]
+coeficiente <- coef(modelo)[2]
+
+# Criar a fórmula do modelo como uma string
+formula_modelo <- sprintf("Mortes = %.2f + (%.2f) * PM10", intercepto, coeficiente)
+
+# Criando gráfico de dispersão com GLM
+p <- ggplot(dados_2006_2010, aes(x = PM10, y = total)) +
+    geom_point() +
+    geom_smooth(method = "glm", se = TRUE, linetype = "solid", color = "blue") +
+    theme_bw() +
+    labs(x = "PM10 (μg/m³)", y = "Mortes Diárias", title = "Dispersão de PM10 x Mortes Diárias (2006 a 2010)") +
+    annotate("text", x = max(dados_2006_2010$PM10), y = max(dados_2006_2010$total), label = formula_modelo, hjust = 1, vjust = 1, size = 4, col = "black")
+
+print(p)
+
+
 # Filtrando dados por estação do ano
-primavera_2009_2010 <- subset(dados_2009_2010, format(Date, "%m") %in% c("09", "10", "11"))
-verao_2009_2010 <- subset(dados_2009_2010, format(Date, "%m") %in% c("12", "01", "02"))
-outono_2009_2010 <- subset(dados_2009_2010, format(Date, "%m") %in% c("03", "04", "05"))
-inverno_2009_2010 <- subset(dados_2009_2010, format(Date, "%m") %in% c("06", "07", "08"))
+outono_2006_2010 <- subset(dados_2006_2010, format(Date, "%m") %in% c("09", "10", "11"))
+inverno_2006_2010 <- subset(dados_2006_2010, format(Date, "%m") %in% c("12", "01", "02"))
+primavera_2006_2010 <- subset(dados_2006_2010, format(Date, "%m") %in% c("03", "04", "05"))
+verao_2006_2010 <- subset(dados_2006_2010, format(Date, "%m") %in% c("06", "07", "08"))
 
 # Adicionando a coluna 'Estacao' aos dataframes
-primavera_2009_2010$Estacao <- "Primavera"
-verao_2009_2010$Estacao <- "Verão"
-outono_2009_2010$Estacao <- "Outono"
-inverno_2009_2010$Estacao <- "Inverno"
+primavera_2006_2010$Estacao <- "Primavera"
+verao_2006_2010$Estacao <- "Verão"
+outono_2006_2010$Estacao <- "Outono"
+inverno_2006_2010$Estacao <- "Inverno"
 
 # Combinando todos os dataframes
-dados_estacoes <- rbind(primavera_2009_2010, verao_2009_2010, outono_2009_2010, inverno_2009_2010)
+dados_estacoes <- rbind(primavera_2006_2010, verao_2006_2010, outono_2006_2010, inverno_2006_2010)
+
+headTail(dados_estacoes)
+
 
 # Criando gráficos por estação do ano
 p <- ggplot(dados_estacoes, aes(x = PM10, y = total)) +
     geom_point() +
-    geom_smooth(method = "lm", se = TRUE, linetype = "solid", color = "blue") +
+    geom_smooth(method = "glm", se = TRUE, linetype = "solid", color = "blue") +
     theme_bw() +
-    labs(x = "PM10 (μg/m³)", y = "Mortes Diárias", title = "Dispersão de PM10 x Mortes Diárias (2009-2010)") +
-    facet_wrap(~ Estacao, ncol = 2)
-
+    labs(x = "PM10 (μg/m³)", y = "Mortes Diárias", title = "Dispersão de PM10 x Mortes Diárias (2006-2010)") +
+    facet_wrap(~ Estacao, ncol = 2) 
 print(p)
 
 
-# Regressões por estação do ano todas as causas (2009 - 2010) 
-reg_primavera <- lm(total ~ PM10, data = primavera_2009_2010)
+
+# Regressões de mortes (todas as causas) por estação (2006 - 2010) 
+reg_primavera <- glm(total ~ PM10, data = primavera_2006_2010)
 summary(reg_primavera)
-reg_verao <- lm(total ~ PM10, data = verao_2009_2010)
+reg_verao <- glm(total ~ PM10, data = verao_2006_2010)
 summary(reg_verao)
-reg_outono <- lm(total ~ PM10, data = outono_2009_2010)
+reg_outono <- glm(total ~ PM10, data = outono_2006_2010)
 summary(reg_outono)
-reg_inverno <- lm(total ~ PM10, data = inverno_2009_2010)
+reg_inverno <- glm(total ~ PM10, data = inverno_2006_2010)
 summary(reg_inverno)
 
 
 # Regressões por estação do ano e mortes por Pneumonia e Influenza (2009 - 2010)
-reg_primavera_i <- lm(IN ~ PM10, data = primavera_2009_2010)
+reg_primavera_i <- lm(IN ~ PM10, data = primavera_2006_2010)
 summary(reg_primavera_i)
-reg_verao_i <- lm(IN ~ PM10, data = verao_2009_2010)
+reg_verao_i <- lm(IN ~ PM10, data = verao_2006_2010)
 summary(reg_verao_i)
-reg_outono_i <- lm(IN ~ PM10, data = outono_2009_2010)
+reg_outono_i <- lm(IN ~ PM10, data = outono_2006_2010)
 summary(reg_outono_i)
-reg_inverno_i <- lm(IN ~ PM10, data = inverno_2009_2010)
+reg_inverno_i <- lm(IN ~ PM10, data = inverno_2006_2010)
 summary(reg_inverno_i)
 
 
 
 # Regressões por estação do ano e mortes em idosos >65 anos (2009 - 2010)
-reg_primavera_65 <- lm(I65 ~ PM10, data = primavera_2009_2010)
+reg_primavera_65 <- lm(I65 ~ PM10, data = primavera_2006_2010)
 summary(reg_primavera_65)
-reg_verao_65 <- lm(I65 ~ PM10, data = verao_2009_2010)
+reg_verao_65 <- lm(I65 ~ PM10, data = verao_2006_2010)
 summary(reg_verao_65)
-reg_outono_65 <- lm(I65 ~ PM10, data = outono_2009_2010)
+reg_outono_65 <- lm(I65 ~ PM10, data = outono_2006_2010)
 summary(reg_outono_65)
-reg_inverno_65 <- lm(I65 ~ PM10, data = inverno_2009_2010)
+reg_inverno_65 <- lm(I65 ~ PM10, data = inverno_2006_2010)
 summary(reg_inverno_65)
 
 
+# Modelo Semilogarítmico 2006 - 2010
+ggplot(dados_estacoes, aes(x = PM10, y = total, group = Estacao, color = Estacao)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE, formula = y ~ log(x)) +
+    scale_color_manual(name = "Estação",
+                       values = c("Primavera" = "green",
+                                  "Verão" = "red",
+                                  "Outono" = "brown",
+                                  "Inverno" = "blue"),
+                       breaks = c("Primavera", "Verão", "Outono", "Inverno")) +
+    scale_x_continuous(trans = "log10", breaks = scales::trans_breaks("log10", function(x) 10^x),
+                       labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+    theme_bw() +
+    labs(x = "PM10 (μg/m³) - Escala logarítmica",
+         y = "Mortes diárias",
+         title = "Mortes diárias x PM10, por estação (2006 a 2010)")
 
+
+
+
+# Regressões MLE de mortes (todas as causas) por estação (2006 - 2010) 
+reg_primavera <- glm(total ~ PM10, data = primavera_2006_2010)
+summary(reg_primavera)
+reg_verao <- glm(total ~ PM10, data = verao_2006_2010)
+summary(reg_verao)
+reg_outono <- glm(total ~ PM10, data = outono_2006_2010)
+summary(reg_outono)
+reg_inverno <- glm(total ~ PM10, data = inverno_2006_2010)
+summary(reg_inverno)
